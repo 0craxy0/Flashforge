@@ -14,12 +14,10 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ApiProvider, ConsumptionTimeSeriesPoint } from "@/types/billing";
+import { ApiProvider } from "@/types/billing";
 import {
-  calculateModelCost,
   formatCurrency,
   formatTokens,
-  MOCK_MODELS,
   MOCK_PROVIDER_QUOTAS,
   MOCK_TIME_SERIES,
 } from "@/data/mock-billing";
@@ -106,7 +104,7 @@ export function MultiApiConsumption({ timeframe }: MultiApiConsumptionProps) {
     ${primaryCoords[primaryCoords.length - 1].x},${svgHeight - paddingY}
   `;
 
-  // Gridline values
+  // Gridline levels
   const gridLevels = [0, 0.25, 0.5, 0.75, 1.0];
 
   const handleSimulateSurge = () => {
@@ -114,13 +112,13 @@ export function MultiApiConsumption({ timeframe }: MultiApiConsumptionProps) {
   };
 
   return (
-    <Card className="border-zinc-800 bg-zinc-950/70 backdrop-blur-md overflow-hidden">
+    <Card className="border-zinc-800 bg-zinc-950/70 backdrop-blur-md overflow-hidden animate-fade-in delay-2">
       <CardHeader className="border-b border-zinc-800/80 pb-4">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <div className="flex items-center gap-2">
               <CardTitle className="text-base font-semibold text-zinc-100 flex items-center gap-2">
-                <Layers size={16} className="text-zinc-400" />
+                <Layers size={16} className="text-zinc-400 transition-transform duration-300 hover:rotate-6" />
                 Multi-API Consumption &amp; Quota Telemetry
               </CardTitle>
               <Badge variant="outline" className="font-mono text-[10px]">
@@ -134,11 +132,11 @@ export function MultiApiConsumption({ timeframe }: MultiApiConsumptionProps) {
 
           {/* Controls: Mode Switch & Simulated Surge */}
           <div className="flex flex-wrap items-center gap-2">
-            <div className="inline-flex rounded-md border border-zinc-800 bg-zinc-900 p-0.5 text-xs">
+            <div className="inline-flex rounded-md border border-zinc-800 bg-zinc-900 p-0.5 text-xs shadow-inner">
               <button
                 type="button"
                 onClick={() => setActiveMetricMode("tokens")}
-                className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${
+                className={`rounded px-2.5 py-1 text-xs font-medium transition-all duration-200 active:scale-95 ${
                   activeMetricMode === "tokens"
                     ? "bg-zinc-800 text-zinc-100 shadow-sm"
                     : "text-zinc-400 hover:text-zinc-200"
@@ -149,7 +147,7 @@ export function MultiApiConsumption({ timeframe }: MultiApiConsumptionProps) {
               <button
                 type="button"
                 onClick={() => setActiveMetricMode("cost")}
-                className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${
+                className={`rounded px-2.5 py-1 text-xs font-medium transition-all duration-200 active:scale-95 ${
                   activeMetricMode === "cost"
                     ? "bg-zinc-800 text-zinc-100 shadow-sm"
                     : "text-zinc-400 hover:text-zinc-200"
@@ -163,11 +161,18 @@ export function MultiApiConsumption({ timeframe }: MultiApiConsumptionProps) {
               variant="outline"
               size="sm"
               onClick={handleSimulateSurge}
-              className="text-xs font-mono border-zinc-800 bg-zinc-900/50 hover:bg-zinc-900 text-zinc-300"
+              className="text-xs font-mono border-zinc-800 bg-zinc-900/50 hover:bg-zinc-900 text-zinc-300 transition-all duration-200 hover:scale-[1.02]"
               title="Test threshold reactive warning by simulating 500k additional tokens"
             >
-              <Zap size={12} className="text-amber-400" />
-              <span>{surgeAddedTokens > 0 ? `Surge +${formatTokens(surgeAddedTokens)}` : "Simulate Surge"}</span>
+              <Zap
+                size={12}
+                className={`transition-colors duration-200 ${
+                  surgeAddedTokens > 0 ? "text-amber-400 animate-bounce" : "text-zinc-400"
+                }`}
+              />
+              <span>
+                {surgeAddedTokens > 0 ? `Surge +${formatTokens(surgeAddedTokens)}` : "Simulate Surge"}
+              </span>
             </Button>
           </div>
         </div>
@@ -184,10 +189,10 @@ export function MultiApiConsumption({ timeframe }: MultiApiConsumptionProps) {
                 key={p}
                 type="button"
                 onClick={() => setSelectedProvider(p)}
-                className={`rounded-md px-2.5 py-1 text-xs font-mono transition-colors whitespace-nowrap ${
+                className={`rounded-md px-2.5 py-1 text-xs font-mono transition-all duration-200 active:scale-95 whitespace-nowrap ${
                   isSelected
-                    ? "bg-zinc-100 text-zinc-950 font-semibold shadow-sm"
-                    : "bg-zinc-900/60 text-zinc-400 border border-zinc-800/80 hover:bg-zinc-800 hover:text-zinc-200"
+                    ? "bg-zinc-100 text-zinc-950 font-semibold shadow-sm scale-[1.03]"
+                    : "bg-zinc-900/60 text-zinc-400 border border-zinc-800/80 hover:bg-zinc-800 hover:text-zinc-200 hover:scale-[1.02]"
                 }`}
               >
                 {p}
@@ -209,18 +214,18 @@ export function MultiApiConsumption({ timeframe }: MultiApiConsumptionProps) {
               [{selectedProvider}]
             </span>
             <div className="flex items-center gap-4 text-[11px]">
-              <span className="flex items-center gap-1.5">
+              <span className="flex items-center gap-1.5 transition-colors hover:text-zinc-200">
                 <span className="h-2 w-2 rounded-full bg-zinc-100" />
                 <span>Current Trajectory</span>
               </span>
-              <span className="flex items-center gap-1.5 text-zinc-500">
+              <span className="flex items-center gap-1.5 text-zinc-500 transition-colors hover:text-zinc-300">
                 <span className="h-0.5 w-3 border-b border-dashed border-zinc-500" />
                 <span>Baseline Run-rate</span>
               </span>
             </div>
           </div>
 
-          <div className="relative h-56 w-full rounded-lg border border-zinc-800/90 bg-zinc-950/90 p-2">
+          <div className="relative h-56 w-full rounded-lg border border-zinc-800/90 bg-zinc-950/90 p-2 overflow-hidden shadow-inner">
             <svg
               className="h-full w-full overflow-visible"
               viewBox={`0 0 ${svgWidth} ${svgHeight}`}
@@ -239,7 +244,7 @@ export function MultiApiConsumption({ timeframe }: MultiApiConsumptionProps) {
                 const y = paddingY + chartH - lvl * chartH;
                 const displayVal = (lvl * maxValue).toFixed(1);
                 return (
-                  <g key={lvl}>
+                  <g key={lvl} className="transition-opacity duration-300">
                     <line
                       x1={paddingX}
                       y1={y}
@@ -263,7 +268,11 @@ export function MultiApiConsumption({ timeframe }: MultiApiConsumptionProps) {
               })}
 
               {/* Shaded Area */}
-              <polygon points={primaryPolygon} fill="url(#consumption-gradient)" />
+              <polygon
+                points={primaryPolygon}
+                fill="url(#consumption-gradient)"
+                className="transition-all duration-700 ease-out"
+              />
 
               {/* Previous Period / Baseline Dashed Line */}
               <polyline
@@ -273,15 +282,17 @@ export function MultiApiConsumption({ timeframe }: MultiApiConsumptionProps) {
                 strokeWidth="1.5"
                 strokeDasharray="5 5"
                 vectorEffect="non-scaling-stroke"
+                className="transition-all duration-700 ease-out"
               />
 
-              {/* Active Consumption Line */}
+              {/* Active Consumption Line with draw animation */}
               <polyline
                 points={primaryPolyline}
                 fill="none"
                 stroke="hsl(0, 0%, 95%)"
                 strokeWidth="2"
                 vectorEffect="non-scaling-stroke"
+                className="transition-all duration-700 ease-out"
               />
 
               {/* Interactive Data Point Pins */}
@@ -289,13 +300,25 @@ export function MultiApiConsumption({ timeframe }: MultiApiConsumptionProps) {
                 const isHovered = hoveredPointIndex === idx;
                 return (
                   <g key={idx} className="cursor-pointer">
+                    {isHovered && (
+                      <circle
+                        cx={coord.x}
+                        cy={coord.y}
+                        r="12"
+                        fill="none"
+                        stroke="hsl(0, 0%, 98%)"
+                        strokeWidth="1"
+                        className="animate-ping opacity-60"
+                      />
+                    )}
                     <circle
                       cx={coord.x}
                       cy={coord.y}
-                      r={isHovered ? 5 : 3}
-                      fill={isHovered ? "hsl(0, 0%, 100%)" : "hsl(0, 0%, 15%)"}
+                      r={isHovered ? 6 : 3.5}
+                      fill={isHovered ? "hsl(0, 0%, 100%)" : "hsl(0, 0%, 12%)"}
                       stroke="hsl(0, 0%, 95%)"
                       strokeWidth={isHovered ? 2.5 : 1.5}
+                      className="transition-all duration-200"
                       onMouseEnter={() => setHoveredPointIndex(idx)}
                       onMouseLeave={() => setHoveredPointIndex(null)}
                     />
@@ -304,16 +327,16 @@ export function MultiApiConsumption({ timeframe }: MultiApiConsumptionProps) {
               })}
             </svg>
 
-            {/* Hover Tooltip Overlay */}
+            {/* Hover Tooltip Overlay with scale-in animation */}
             {hoveredPointIndex !== null && (
               <div
-                className="absolute z-20 pointer-events-none rounded-md border border-zinc-700 bg-zinc-900/95 p-2.5 text-xs shadow-xl font-mono"
+                className="absolute z-20 pointer-events-none rounded-md border border-zinc-700 bg-zinc-900/95 backdrop-blur-md p-2.5 text-xs shadow-2xl font-mono animate-scale-in"
                 style={{
                   left: `${Math.min(
                     85,
                     Math.max(10, (hoveredPointIndex / (chartPoints.length - 1)) * 100)
                   )}%`,
-                  top: "20%",
+                  top: "15%",
                   transform: "translateX(-50%)",
                 }}
               >
@@ -337,17 +360,17 @@ export function MultiApiConsumption({ timeframe }: MultiApiConsumptionProps) {
 
           <div className="flex justify-between px-2 pt-2 text-[10px] font-mono text-zinc-500">
             {chartPoints.map((p) => (
-              <span key={p.label}>{p.label}</span>
+              <span key={p.label} className="transition-colors hover:text-zinc-300">{p.label}</span>
             ))}
           </div>
         </div>
 
-        {/* AI Forecast & Anomaly Detection Panel (Utilizing Sparkles strictly as allowed by AGENTS.md rule 3) */}
-        <div className="rounded-lg border border-zinc-800/80 bg-zinc-950/80 p-4">
+        {/* AI Forecast & Anomaly Detection Panel with subtle hover rotate on Sparkles */}
+        <div className="group rounded-lg border border-zinc-800/80 bg-zinc-950/80 p-4 transition-all duration-300 hover:border-zinc-700/80 hover:bg-zinc-900/30">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-start gap-3">
-              <div className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded border border-zinc-700/60 bg-zinc-900 text-zinc-200">
-                <Sparkles size={14} className="text-zinc-200" />
+              <div className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded border border-zinc-700/60 bg-zinc-900 text-zinc-200 transition-all duration-300 group-hover:scale-110 group-hover:border-zinc-600">
+                <Sparkles size={14} className="text-zinc-200 transition-transform duration-300 group-hover:rotate-12" />
               </div>
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
@@ -366,8 +389,11 @@ export function MultiApiConsumption({ timeframe }: MultiApiConsumptionProps) {
                 </p>
               </div>
             </div>
-            <span className="hidden sm:inline-flex items-center gap-1 rounded bg-zinc-900 px-2 py-1 text-[10px] font-mono text-zinc-400 border border-zinc-800">
-              <TrendingUp size={11} className="text-emerald-400" />
+            <span className="hidden sm:inline-flex items-center gap-1.5 rounded bg-zinc-900 px-2 py-1 text-[10px] font-mono text-zinc-400 border border-zinc-800 transition-colors group-hover:border-zinc-700">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
+              </span>
               Velocity Stable
             </span>
           </div>
@@ -390,7 +416,7 @@ export function MultiApiConsumption({ timeframe }: MultiApiConsumptionProps) {
           </div>
 
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
-            {MOCK_PROVIDER_QUOTAS.map((quota) => {
+            {MOCK_PROVIDER_QUOTAS.map((quota, idx) => {
               // Apply simulated surge if testing
               const surgeShare =
                 quota.provider === "OpenAI"
@@ -410,16 +436,24 @@ export function MultiApiConsumption({ timeframe }: MultiApiConsumptionProps) {
               return (
                 <div
                   key={quota.provider}
-                  className={`rounded-lg border p-3.5 transition-all ${
+                  className={`group rounded-lg border p-3.5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg animate-fade-in ${
+                    idx % 4 === 0
+                      ? "delay-1"
+                      : idx % 4 === 1
+                      ? "delay-2"
+                      : idx % 4 === 2
+                      ? "delay-3"
+                      : "delay-4"
+                  } ${
                     isCritical
-                      ? "border-rose-500/40 bg-rose-950/10"
+                      ? "border-rose-500/50 bg-rose-950/15 shadow-[0_0_15px_rgba(244,63,94,0.1)]"
                       : isWarning
-                      ? "border-amber-500/40 bg-amber-950/10"
-                      : "border-zinc-800/80 bg-zinc-900/40 hover:border-zinc-700/80"
+                      ? "border-amber-500/50 bg-amber-950/15 shadow-[0_0_15px_rgba(245,158,11,0.1)]"
+                      : "border-zinc-800/80 bg-zinc-900/40 hover:border-zinc-700/80 hover:bg-zinc-900/60"
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-semibold text-zinc-200">
+                    <span className="text-xs font-semibold text-zinc-200 transition-colors group-hover:text-white">
                       {quota.provider}
                     </span>
                     <Badge
@@ -430,14 +464,16 @@ export function MultiApiConsumption({ timeframe }: MultiApiConsumptionProps) {
                           ? "warning"
                           : "secondary"
                       }
-                      className="text-[10px]"
+                      className={`text-[10px] ${
+                        isCritical ? "animate-pulse" : isWarning ? "animate-pulse" : ""
+                      }`}
                     >
                       {isCritical ? "EXCEEDED" : isWarning ? "NEAR QUOTA" : "HEALTHY"}
                     </Badge>
                   </div>
 
                   <div className="flex items-baseline justify-between font-mono text-xs mb-1.5">
-                    <span className="text-zinc-100 font-semibold">
+                    <span className="text-zinc-100 font-semibold transition-transform duration-200 group-hover:translate-x-0.5">
                       {formatCurrency(totalSpendWithSurge)}
                     </span>
                     <span className="text-zinc-500 text-[11px]">
@@ -445,9 +481,9 @@ export function MultiApiConsumption({ timeframe }: MultiApiConsumptionProps) {
                     </span>
                   </div>
 
-                  {/* Progress Bar */}
+                  {/* Progress Bar with Shimmer Effect and Smooth Transition */}
                   <div
-                    className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-800"
+                    className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-800 shimmer-track"
                     role="progressbar"
                     aria-label={`${quota.provider} spend quota`}
                     aria-valuenow={spendPercentage}
@@ -455,11 +491,11 @@ export function MultiApiConsumption({ timeframe }: MultiApiConsumptionProps) {
                     aria-valuemax={100}
                   >
                     <div
-                      className={`h-full rounded-full transition-all duration-300 ${
+                      className={`h-full rounded-full transition-all duration-700 ease-out ${
                         isCritical
-                          ? "bg-rose-500"
+                          ? "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)]"
                           : isWarning
-                          ? "bg-amber-400"
+                          ? "bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.6)]"
                           : "bg-zinc-300"
                       }`}
                       style={{ width: `${Math.min(100, spendPercentage)}%` }}
@@ -471,13 +507,13 @@ export function MultiApiConsumption({ timeframe }: MultiApiConsumptionProps) {
                       {formatTokens(quota.totalTokens + (quota.provider === "OpenAI" ? surgeAddedTokens : 0))} tokens
                     </span>
                     <span
-                      className={
+                      className={`transition-colors duration-200 ${
                         isCritical
-                          ? "text-rose-400"
+                          ? "text-rose-400 font-semibold"
                           : isWarning
-                          ? "text-amber-400"
+                          ? "text-amber-400 font-semibold"
                           : "text-zinc-500"
-                      }
+                      }`}
                     >
                       {spendPercentage}% used
                     </span>

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ArrowUpRight, CheckCircle2, ExternalLink, HelpCircle } from "lucide-react";
+import { CheckCircle2, ExternalLink } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -11,7 +11,7 @@ import {
 
 export function ApiMeteringTable() {
   return (
-    <Card className="border-zinc-800 bg-zinc-950/70 backdrop-blur-md overflow-hidden">
+    <Card className="border-zinc-800 bg-zinc-950/70 backdrop-blur-md overflow-hidden animate-fade-in delay-3">
       <CardHeader className="border-b border-zinc-800/80 pb-4">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -51,19 +51,19 @@ export function ApiMeteringTable() {
                 return (
                   <tr
                     key={model.id}
-                    className="transition-colors hover:bg-zinc-900/40"
+                    className="group transition-all duration-150 hover:bg-zinc-900/60 cursor-default"
                   >
                     {/* Provider & Model */}
                     <td className="px-4 py-3.5">
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold text-zinc-100">
+                        <span className="font-semibold text-zinc-100 transition-colors group-hover:text-white">
                           {model.provider}
                         </span>
                         <a
                           href={model.documentationUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="text-zinc-500 hover:text-zinc-300"
+                          className="text-zinc-500 hover:text-zinc-200 transition-all duration-150 hover:scale-125"
                           title={`View ${model.provider} pricing`}
                         >
                           <ExternalLink size={11} />
@@ -76,7 +76,7 @@ export function ApiMeteringTable() {
 
                     {/* Endpoint Route */}
                     <td className="px-4 py-3.5">
-                      <span className="rounded bg-zinc-900 px-1.5 py-0.5 font-mono text-[11px] text-zinc-300 border border-zinc-800">
+                      <span className="rounded bg-zinc-900 px-1.5 py-0.5 font-mono text-[11px] text-zinc-300 border border-zinc-800 transition-colors group-hover:border-zinc-700">
                         /{model.endpoint}
                       </span>
                       <div className="mt-1 text-[10px] text-zinc-500 font-mono">
@@ -85,7 +85,7 @@ export function ApiMeteringTable() {
                     </td>
 
                     {/* Input Tokens */}
-                    <td className="px-4 py-3.5 text-right font-mono text-zinc-200">
+                    <td className="px-4 py-3.5 text-right font-mono text-zinc-200 transition-colors group-hover:text-white">
                       {formatTokens(model.inputTokens)}
                     </td>
 
@@ -95,7 +95,7 @@ export function ApiMeteringTable() {
                     </td>
 
                     {/* Output Tokens */}
-                    <td className="px-4 py-3.5 text-right font-mono text-zinc-200">
+                    <td className="px-4 py-3.5 text-right font-mono text-zinc-200 transition-colors group-hover:text-white">
                       {formatTokens(model.outputTokens)}
                     </td>
 
@@ -105,7 +105,7 @@ export function ApiMeteringTable() {
                     </td>
 
                     {/* Estimated Spend */}
-                    <td className="px-4 py-3.5 text-right font-mono font-semibold text-zinc-100">
+                    <td className="px-4 py-3.5 text-right font-mono font-semibold text-zinc-100 transition-transform duration-150 group-hover:translate-x-0.5">
                       {formatCurrency(cost)}
                     </td>
 
@@ -113,7 +113,7 @@ export function ApiMeteringTable() {
                     <td className="px-4 py-3.5 text-center">
                       <Badge
                         variant={hasWarning ? "warning" : "success"}
-                        className="text-[10px]"
+                        className={`text-[10px] ${hasWarning ? "animate-pulse" : ""}`}
                       >
                         {hasWarning ? "WARN" : "ACTIVE"}
                       </Badge>

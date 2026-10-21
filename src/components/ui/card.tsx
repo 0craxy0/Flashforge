@@ -1,13 +1,20 @@
 import * as React from "react";
 
+export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  interactive?: boolean;
+}
+
 export function Card({
   className = "",
+  interactive = true,
   children,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+}: CardProps) {
   return (
     <div
-      className={`rounded-lg border border-zinc-800 bg-zinc-950/60 text-zinc-100 backdrop-blur-sm shadow-sm transition-colors ${className}`}
+      className={`rounded-lg border border-zinc-800 bg-zinc-950/60 text-zinc-100 backdrop-blur-sm shadow-sm ${
+        interactive ? "card-interactive" : "transition-colors duration-200"
+      } ${className}`}
       {...props}
     >
       {children}

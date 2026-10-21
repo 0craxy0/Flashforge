@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 
 export const metadata: Metadata = {
   title: "Flashforge — Multi-API Billing & Usage Analytics",
@@ -14,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className="min-h-screen bg-black text-zinc-100 antialiased selection:bg-zinc-800 selection:text-zinc-100">
-        {children}
+        <DashboardShell>{children}</DashboardShell>
       </body>
     </html>
   );
